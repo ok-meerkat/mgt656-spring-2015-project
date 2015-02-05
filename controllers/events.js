@@ -92,8 +92,16 @@ function rsvp (request, response){
   }
 
   if(validator.isEmail(request.body.email)){
-    ev.attending.push(request.body.email);
-    response.redirect('/events/' + ev.id);
+    var email = request.body.email;
+    if (email.length > 9 && email.substr(-9,email.length).toLowerCase() == "@yale.edu"){
+      ev.attending.push(request.body.email);
+      response.redirect('/events/' + ev.id);
+    }
+    else{
+      var contextData = {errors: [], event: ev};
+      contextData.errors.push('Invalid email: Yale Emails Only');
+      response.render('event-detail.html', contextData);
+    }
   }else{
     var contextData = {errors: [], event: ev};
     contextData.errors.push('Invalid email');
